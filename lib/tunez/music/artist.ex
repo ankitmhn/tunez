@@ -7,19 +7,8 @@ defmodule Tunez.Music.Artist do
   end
 
   actions do
-    create :create do
-      accept [:name, :biography]
-    end
-
-    read :read do
-      # This action is the primary read action. There maybe other read actions defined later.
-      # Each of the CRUD actions can have ONE primary action.
-      primary? true
-    end
-
-    update :update do
-      accept [:name, :biography]
-    end
+    defaults [:create, :read, :update, :destroy]
+    default_accept [:name, :biography]
   end
 
   attributes do
