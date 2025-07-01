@@ -149,11 +149,28 @@ defmodule TunezWeb.Artists.ShowLive do
   end
 
   def handle_event("destroy-artist", _params, socket) do
+    IO.inspect(socket.assigns.artist, label: "Destroying artist")
+
+    case Tunez.Music.destroy_artist(socket.assigns.artist) do
+      :ok ->
+        # TODO: DEBUG this. code-path doesn't work... not sure why
+        socket =
+          socket
+          |> put_flash(:info, "Artist deleted successfully.")
+          |> push_navigate(to: ~p"/")
+
+        {:noreply, socket}
+
+      {:error, error} ->
+        Logger.info("Failed to delete artist: #{inspect(error)}")
+        socket = socket |> put_flash(:error, "Failed to delete artist.")
+        {:noreply, socket}
+    end
+
     {:noreply, socket}
   end
 
-  def handle_event("destroy-album", _params, socket) do
-    {:noreply, socket}
+  def handle_event("destroy-album", _params, _socket) do
   end
 
   def handle_event("follow", _params, socket) do
