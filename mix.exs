@@ -66,6 +66,7 @@ defmodule Tunez.MixProject do
       {:bandit, "~> 1.5"},
       {:igniter, "~> 0.3", only: [:dev]},
       {:phoenix_test, github: "germsvel/phoenix_test", only: :test, runtime: false},
+      {:live_debugger, "~> 0.3.0", only: :dev},
       {:tidewave, "~> 0.1", only: :dev}
     ]
   end
@@ -81,8 +82,8 @@ defmodule Tunez.MixProject do
       setup: ["deps.get", "ash.setup", "assets.setup", "assets.build", "run priv/repo/seeds.exs"],
       "ecto.setup": ["ecto.create", "ecto.migrate"],
       seed: [
-        "run priv/repo/seeds/01-artists.exs"
-        # "run priv/repo/seeds/02-albums.exs",
+        "run priv/repo/seeds/01-artists.exs",
+        "run priv/repo/seeds/02-albums.exs"
         # "run priv/repo/seeds/08-tracks.exs"
       ],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
