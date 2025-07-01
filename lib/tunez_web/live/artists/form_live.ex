@@ -1,8 +1,22 @@
 defmodule TunezWeb.Artists.FormLive do
   use TunezWeb, :live_view
 
+  # handler for editing an existing artist
+  def mount(%{"id" => artist_id}, _session, socket) do
+    artist = Tunez.Music.get_artist_by_id!(artist_id)
+    form = Tunez.Music.form_to_update_artist(artist)
+
+    socket =
+      socket
+      |> assign(:form, to_form(form))
+      |> assign(:page_title, "Update Artist: #{artist.name}")
+
+    {:ok, socket}
+  end
+
+  # handler for creating a new artist
   def mount(_params, _session, socket) do
-    form = %{}
+    form = Tunez.Music.form_to_create_artist()
 
     socket =
       socket
@@ -37,11 +51,33 @@ defmodule TunezWeb.Artists.FormLive do
     """
   end
 
-  def handle_event("validate", %{"form" => _form_data}, socket) do
+  def handle_event("validate", %{"form" => form_data}, socket) do
+    socket =
+      socket
+      |> update(:form, fn form ->
+        AshPhoenix.Form.validate(form, form_data)
+      end)
+
     {:noreply, socket}
   end
 
-  def handle_event("save", %{"form" => _form_data}, socket) do
-    {:noreply, socket}
+  def handle_event("save", %{"form" => form_data}, socket) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: form_data) do
+      {:ok, artist} ->
+        socket =
+          socket
+          |> put_flash(:info, "Artist created successfully.")
+          |> push_navigate(to: ~p"/artists/#{artist.id}")
+
+        {:noreply, socket}
+
+      {:error, changeset} ->
+        socket =
+          socket
+          |> put_flash(:error, "Failed to create artist.")
+          |> assign(:form, changeset)
+
+        {:noreply, socket}
+    end
   end
 end
