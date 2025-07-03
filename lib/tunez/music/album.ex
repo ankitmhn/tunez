@@ -23,6 +23,25 @@ defmodule Tunez.Music.Album do
     end
   end
 
+  validations do
+    validate numericality(:year_released,
+               greater_than_or_equal_to: 1950,
+               less_than_or_equal_to: &__MODULE__.next_year/0
+             ),
+             where: [present(:year_released)],
+             message: "Must be between 1950 and next_year inclusive "
+
+    validate match(
+               :cover_image_url,
+               ~r/^(https:\/\/[^\/]+\/.*|\/images\/).*.(jpg|jpeg|png|gif)$/i
+             ),
+             where: [changing(:cover_image_url)],
+             message:
+               "Must start with 'https://' or '/images/' and end with jpg, jpeg, png, or gif"
+  end
+
+  def next_year, do: Date.utc_today().year + 1
+
   attributes do
     uuid_primary_key :id
 
