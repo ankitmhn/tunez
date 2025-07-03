@@ -65,4 +65,10 @@ defmodule Tunez.Music.Album do
       description "The artist who created the album"
     end
   end
+
+  identities do
+    identity :unique_album_names_per_artist, [:name, :artist_id],
+      message: "An album with this name already exists for this artist",
+      description: "Ensures that an artist cannot have two albums with the same name"
+  end
 end
