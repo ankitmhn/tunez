@@ -7,7 +7,7 @@ defmodule Tunez.Music.Album do
 
     references do
       # create an index on the foreign key for the relationship
-      reference :artist, index?: true
+      reference :artist, index?: true, on_delete: :delete
     end
   end
 
