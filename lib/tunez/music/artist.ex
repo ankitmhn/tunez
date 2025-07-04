@@ -4,10 +4,25 @@ defmodule Tunez.Music.Artist do
   postgres do
     table "artists"
     repo Tunez.Repo
+
+    custom_indexes do
+      # https://pganalyze.com/blog/gin-index#indexing-like-searches-with-trigrams-and-gin_trgm_ops
+      index "name gin_trgm_ops", name: "artists_name_gin_index", using: "GIN"
+    end
   end
 
   actions do
     defaults [:create, :read, :destroy]
+
+    read :search do
+      # case insensitive string
+      argument :query, :ci_string do
+        constraints allow_empty?: true
+        default ""
+      end
+
+      filter expr(contains(name, ^arg(:query)) or contains(biography, ^arg(:query)))
+    end
 
     update :update do
       # Because the change functionality is imperative and not data-layer-compatible
