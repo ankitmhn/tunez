@@ -41,6 +41,9 @@ defmodule Tunez.Music.Artist do
 
     attribute :name, :string do
       allow_nil? false
+      # public field so that it is accessible when sorting
+      # allows for Tunez.Music.search_artists("the", [query: [sort_input: "-name"]])
+      public? true
       description "The name of the artist"
     end
 
@@ -51,8 +54,8 @@ defmodule Tunez.Music.Artist do
       default []
     end
 
-    create_timestamp :inserted_at
-    update_timestamp :updated_at
+    create_timestamp :inserted_at, public?: true
+    update_timestamp :updated_at, public?: true
   end
 
   relationships do
